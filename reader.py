@@ -32,46 +32,45 @@ def learner(train_data, T, depth):
     total_predict_y = []
     m = len(train_data)
     n_test = len(test_data)
-    training_sample_indices = np.zeros((T, m))
-    test_output = np.zeros((T, n_test))
+    training_sample_indices = np.zeros((T, m)).astype(int)
+
+    test_output = np.zeros((T, n_test, len(classes)))
 
     for i in range(T):
-        # randomTrainData = np.random.choice(train_data[:])
-        training_sample_indices[i] = np.random.choice(m,
-                                                      m, replace=True)
-        training_samples = train_data[
-                           training_sample_indices[
-                             i].astype(int), :]
+        training_sample_indices[i] = np.random.choice(m, m, replace=True)
+        training_samples = train_data[training_sample_indices[i], :]
 
         trainX = training_samples[:, :-1]
         trainy = training_samples[:, -1]
-        mytree.fit(trainX, trainy, training_metadata,
-                 max_depth=depth)
-        predicted_y = mytree.predict(test_X, prob=False)
-        total_predict_y.append(predicted_y)
+        mytree.fit(trainX, trainy, training_metadata, max_depth=depth)
+        predicted_y = mytree.predict(test_X, prob=True)
         test_output[i] = predicted_y
-        # print(predicted_y.shape)
-    # np.append(test_output, total_predict_y)
 
-    predictions = np.zeros(n_test)
-    for i in range(n_test):
-      predictions[i] = np.max(test_output[:, i])
+    # output indexes
+    for train_sample_row in range(len(training_samples)):
+        print(','.join(training_sample_indices[:, train_sample_row].astype(str)))
 
-    print(training_sample_indices.transpose().astype(int))
     print()
-    out1 = np.column_stack((test_output.transpose(),
-                            predictions.transpose()))
-    out2 = np.column_stack((out1, test_y))
-    print(out2.astype(int))
+    avg_prob = np.average(test_output, axis=0)
 
-    exit(-2)
-    return total_predict_y
+    predictions = np.zeros(n_test).astype(object)
 
+    for i in range(len(test_data)):
+        for j in range(T):
+            tree_pred_idx = np.argmax(test_output[j, i, :])
+            tree_pred = classes[tree_pred_idx]
+            print(tree_pred, end=',')
 
+        pred_idx = np.argmax(avg_prob[i,:])
+        predictions[i] = classes[pred_idx]
+        print("{0},{1}".format(predictions[i], test_y[i]))
+
+    print()
+    print((predictions == test_y).sum() / n_test)
+    return
 
 
 training_set, test_set, depth, T = getArgs()
-
 training_data, training_metadata, feature_range = loadData(training_set)
 classes = feature_range[-1]
 features = training_metadata[0:-1, 0]
@@ -90,10 +89,9 @@ train_y = training_data[:,-1]
 test_data, test_metadata, feature_range_test = loadData(test_set)
 test_data = np.array(test_data)
 test_X = test_data[:,:-1]
-test_y = test_data[:,-1]
+test_y = test_data[:,-1].astype(object)
 
-total_prediction = learner(training_data, T, depth)
-print(total_prediction)
+learner(training_data, T, depth)
 
 # Predict the test labels:
 # predicted_y = mytree.predict(test_X, prob=True)
