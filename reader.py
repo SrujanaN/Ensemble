@@ -18,7 +18,7 @@ def getArgs():
 
 
 def loadData(fileName):
-    feature= []
+    feature = []
     with open(fileName, 'r') as write_file:
         data = json.load(write_file)
         metadata = np.array(data['metadata']['features'])
@@ -61,7 +61,7 @@ def learner(train_data, T, depth):
             tree_pred = classes[tree_pred_idx]
             print(tree_pred, end=',')
 
-        pred_idx = np.argmax(avg_prob[i,:])
+        pred_idx = np.argmax(avg_prob[i, :])
         predictions[i] = classes[pred_idx]
         print("{0},{1}".format(predictions[i], test_y[i]))
 
@@ -76,23 +76,12 @@ classes = feature_range[-1]
 features = training_metadata[0:-1, 0]
 feature_types = training_metadata[0:-1, 1]
 train_labels = np.array(training_data[:, -1])
-train_X = training_data[:,:-1]
-train_y = training_data[:,-1]
-
-# Build and train a decision tree:
-# mytree = dt.DecisionTree()
-# mytree.fit(train_X, train_y, training_metadata,
-#            max_depth=depth)
-# look at the structure of the trained tree:
-# print(mytree)
+train_X = training_data[:, :-1]
+train_y = training_data[:, -1]
 
 test_data, test_metadata, feature_range_test = loadData(test_set)
 test_data = np.array(test_data)
-test_X = test_data[:,:-1]
-test_y = test_data[:,-1].astype(object)
+test_X = test_data[:, :-1]
+test_y = test_data[:, -1].astype(object)
 
 learner(training_data, T, depth)
-
-# Predict the test labels:
-# predicted_y = mytree.predict(test_X, prob=True)
-# print(predicted_y.shape)
