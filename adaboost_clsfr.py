@@ -41,11 +41,11 @@ def adaboost_classifier(train_x, train_y, test_x, test_y, T, depth):
         mytree.fit(train_x, train_y, training_metadata, depth, wts[:, i])
         predictions_y = mytree.predict(train_x)
         err = 0
-
+        # compute weights
         for j in range(n_train):
             if predictions_y[j] != train_y[j]:
                 err += wts[j, i]
-
+        # break the loop based on error criteria
         if err >= (1 - (1/k)):
             break
 
@@ -56,7 +56,7 @@ def adaboost_classifier(train_x, train_y, test_x, test_y, T, depth):
                 wts[j, i+1] = wts[j, i] * np.exp(alpha[i])
             else:
                 wts[j, i+1] = wts[j, i]
-#         normalize
+        # normalize
         wts[:, i+1] = [x / sum(wts[:, i+1]) for x in wts[:, i+1]]
         pred_test[:, i] = mytree.predict(test_x)
 
