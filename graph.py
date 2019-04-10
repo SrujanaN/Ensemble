@@ -136,11 +136,11 @@ actual = []
 predicted = []
 if clsfr == "bag":
     for i in range(1, 11):
-        accuracy = learner(training_data, i, 8)
+        accuracy = learner(training_data, i, 12)
         print(accuracy)
 else:
     for i in range(1, 11):
-        accuracy = adaboost_classifier(train_X, train_y, test_X, test_y, i, 8)
+        accuracy = adaboost_classifier(train_X, train_y, test_X, test_y, i, 12)
         print(accuracy)
 
 

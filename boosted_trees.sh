@@ -1,0 +1,1 @@
+python adaboost_clsfr.py $1 $2 $3 $4
