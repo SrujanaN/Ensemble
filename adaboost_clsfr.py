@@ -104,4 +104,5 @@ test_data = np.array(test_data)
 test_X = test_data[:, :-1]
 test_y = test_data[:, -1].astype(object)
 
+#adaboost classifier
 adaboost_classifier(train_X, train_y, test_X, test_y, T, depth)
